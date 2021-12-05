@@ -14,6 +14,7 @@ services:
     volumes:
       - wpData:/var/www/html
       - ./hepere:/var/www/html/wp-content/themes/hepere
+      - ./test-plugin:/var/www/html/wp-content/themes/test-plugin
     environment:
       TZ: 'Asia/Tokyo'
       WORDPRESS_DB_HOST: 'db:3306'

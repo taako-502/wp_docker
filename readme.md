@@ -17,6 +17,12 @@ docker exec -it wordpress /bin/bash
 docker-compose run --rm wpcli --info
 ```
 
+## プラグインのスキャフォールド
+```
+docker exec -it wordpress /bin/bash
+wp --allow-root scaffold plugin-tests test-plugin
+```
+
 ## 参考資料
 - [WordPressの開発環境をDockerで構築する[その1]](https://samurai-project.com/articles/3397)
 - [WordPressの開発環境をDockerで構築する[その2]](https://samurai-project.com/articles/3423)
