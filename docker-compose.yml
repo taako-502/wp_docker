@@ -4,7 +4,7 @@ services:
     build:
       context: wordpress
     container_name: wordpress
-    image: wordpress:php7.4
+    image: wordpress:php8.0
     restart: always
     working_dir: /var/www/html
     ports:
