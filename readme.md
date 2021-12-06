@@ -31,3 +31,10 @@ wp --allow-root scaffold plugin-tests test-plugin
 - [Dockerで作ったWordPress環境にWP-CLIを追加する方法](https://samurai-project.com/articles/3413)
 - [Docker を使って WordPress plugin にテストのためのファイルを追加しよう](https://futureys.tokyo/lets-add-files-for-test-into-wordpress-plugin-by-docker/)
 - [composer Quick reference](https://hub.docker.com/_/composer)
+
+## 手順にないけどやること
+- SVNインストール
+- vimインストール
+- mariadbインストール
+    - `apt-get update`
+    - `apt install mariadb-client`
