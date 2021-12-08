@@ -28,6 +28,58 @@ cd /var/www/html/wp-content/plugins/test-plugin
 bash bin/install-wp-tests.sh wordpress root password localhost:/var/run/mysqld/mysqld.sock
 ```
 
+## phpunitインストール
+```
+composer init
+
+Package name (<vendor>/<name>) [kuno1/my-plugin]: kuno1/my-plugin
+Description []: A sample plugin for Testing WordPress for Continuous Integration.
+Author [kouno1 <mail@kunoichiwp.com>, n to skip]: n
+Minimum Stability []: stable
+Package Type (e.g. library, project, metapackage, composer-plugin) []: wordpress-plugin
+License []: GPL-3.0-or-later
+
+Define your dependencies.
+
+Would you like to define your dependencies (require) interactively [yes]? no
+Would you like to define your dev dependencies (require-dev) interactively [yes]? no
+
+{
+    "name": "kuno1/my-plugin",
+    "description": "A sample plugin for Testing WordPress for Continuous Integration.",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "minimum-stability": "stable",
+    "require": {}
+}
+
+Do you confirm generation [yes]? yes
+Would you like the vendor directory added to your .gitignore [yes]? yes
+```
+
+```
+composer require --dev phpunit/phpunit:5.7.21
+```
+
+## composer.json
+こうすること。
+```
+{
+    "name": "test/test-plugin",
+    "scripts" : {
+	    "test":"phpunit"
+    },
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^5.7.21",
+        "yoast/phpunit-polyfills": "^1.0"
+    }
+}
+```
+https://capitalp.jp/2021/10/14/wordpres-phpunit-updated/
+
 ## 参考資料
 - [WordPressの開発環境をDockerで構築する[その1]](https://samurai-project.com/articles/3397)
 - [WordPressの開発環境をDockerで構築する[その2]](https://samurai-project.com/articles/3423)
@@ -42,6 +94,8 @@ bash bin/install-wp-tests.sh wordpress root password localhost:/var/run/mysqld/m
     - `apt-get update`
     - `apt-get install subversion`
 - vimインストール
+    - `apt-get update`
+    - `apt-get install vim`
 - mariadbインストール
     - `apt-get update`
     - `apt install mariadb-common`
