@@ -21,8 +21,6 @@ wp --allow-root scaffold plugin test-plugin
 ```
 
 ## テスト用のワードプレスをインストール
-あらかじめ`mariadb`のrootのユーザのログイン方式を変更する
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 ```
 cd /var/www/html/wp-content/plugins/test-plugin
 bash bin/install-wp-tests.sh wordpress root password localhost:/var/run/mysqld/mysqld.sock
