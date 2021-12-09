@@ -86,6 +86,7 @@ https://capitalp.jp/2021/10/14/wordpres-phpunit-updated/
 - [Docker を使って WordPress plugin にテストのためのファイルを追加しよう](https://futureys.tokyo/lets-add-files-for-test-into-wordpress-plugin-by-docker/)
 - [composer Quick reference](https://hub.docker.com/_/composer)
 - [dockerからmysqlに接続できない](https://qiita.com/KOBA-RYOTA/items/3cf5070b54845e151034)
+- [PHP: PHPUnit](https://make.wordpress.org/core/handbook/testing/automated-testing/phpunit/)
 
 ## 手順にないけどやること
 - SVNインストール
