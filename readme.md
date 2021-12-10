@@ -1,5 +1,20 @@
-## WordPressのテスト環境
-### 実行方法
+# WordPressのテスト環境
+## 概要
+WordPressテーマの自動テスト環境の手順を以下に記述する。
+
+## もくじ
+ざっくり以下の手順でテスト環境を構築する。
+`hepere`はテーマ名です。<br>
+テストするテーマ名に合わせて置換して使用してください。<br>
+
+1. DockerでWordPressのコンテナを作成する。
+2. テーマのスキャフォールド
+3. コンテナ内にテスト用の資材を準備する。
+    - mariadb
+    - phpunit
+4. テストを実行する。
+
+## DockerでWordPressのコンテナを作成する。
 ```
 docker-compose up -d
 ```
@@ -11,93 +26,92 @@ execする。
 docker exec -it wordpress /bin/bash
 ```
 
-## プラグインのスキャフォールド
-あらかじめSVNをインストールしておく。
-また、`localhost:8080`より、インストールまで済ませる。
+## テーマのスキャフォールド
+`SVN`をインストール。
 ```
-mkdir /var/www/html/wp-content/plugins/test-plugin
-cd /var/www/html
-wp --allow-root scaffold plugin test-plugin
+apt-get update
+apt-get install subversion
 ```
 
-## テスト用のワードプレスをインストール
+また、ブラウザから`localhost:8080`を開き、インストールまで済ませる。<br>
+または、`wp-cli`のコマンドでインストールすることも可能。<br>
 ```
-cd /var/www/html/wp-content/plugins/test-plugin
+wp --allow-root core install --url=http://localhost:8080/ --title=test --admin_user=admin --admin_password=password --admin_email=admin@example.com
+```
+
+次に、スキャフォールドを実行。
+
+```
+cd /var/www/html
+wp --allow-root scaffold theme-tests hepere
+```
+
+これで、phpunitに必要なファイルが作成される。
+
+## コンテナ内にテスト用の資材を準備
+まずは`mariadb`をインストール。<br>
+※上から順番に実行しないと、最初からやり直しになる可能性あり。
+```
+apt-get update
+apt install mariadb-common
+apt install mariadb-client
+apt install mariadb-server
+service mariadb restart
+```
+
+### テスト用のワードプレスをインストール
+テスト用のワードプレスをインストールする。
+```
+cd /var/www/html/wp-content/themes/hepere
 bash bin/install-wp-tests.sh wordpress root password localhost:/var/run/mysqld/mysqld.sock
 ```
 
 ## phpunitインストール
+`phpunit`をインストールする。
 ```
 composer init
 
-Package name (<vendor>/<name>) [kuno1/my-plugin]: kuno1/my-plugin
-Description []: A sample plugin for Testing WordPress for Continuous Integration.
-Author [kouno1 <mail@kunoichiwp.com>, n to skip]: n
+Package name (<vendor>/<name>) [root/hepere]: wp_theme/hepere
+Description []:
+Author [, n to skip]: n
 Minimum Stability []: stable
-Package Type (e.g. library, project, metapackage, composer-plugin) []: wordpress-plugin
+Package Type (e.g. library, project, metapackage, composer-plugin) []: composer-theme
 License []: GPL-3.0-or-later
 
 Define your dependencies.
 
 Would you like to define your dependencies (require) interactively [yes]? no
 Would you like to define your dev dependencies (require-dev) interactively [yes]? no
+Add PSR-4 autoload mapping? Maps namespace "WpTheme\Hepere" to the entered relative path. [src/, n to skip]: no
 
 {
-    "name": "kuno1/my-plugin",
-    "description": "A sample plugin for Testing WordPress for Continuous Integration.",
-    "type": "wordpress-plugin",
+    "name": "wp_theme/hepere",
+    "type": "composer-theme",
     "license": "GPL-3.0-or-later",
     "minimum-stability": "stable",
     "require": {}
 }
-
-Do you confirm generation [yes]? yes
-Would you like the vendor directory added to your .gitignore [yes]? yes
 ```
 
+以下のコマンドを実行する。
 ```
 composer require --dev phpunit/phpunit:5.7.21
+composer update
+composer install
 ```
 
-## composer.json
-こうすること。
+## テストを実行
+以下のコマンドでテストを実行する。
 ```
-{
-    "name": "test/test-plugin",
-    "scripts" : {
-	    "test":"phpunit"
-    },
-    "type": "wordpress-plugin",
-    "license": "GPL-3.0-or-later",
-    "minimum-stability": "stable",
-    "require-dev": {
-        "phpunit/phpunit": "^5.7.21",
-        "yoast/phpunit-polyfills": "^1.0"
-    }
-}
+composer test
 ```
-https://capitalp.jp/2021/10/14/wordpres-phpunit-updated/
 
 ## 参考資料
-- [WordPressの開発環境をDockerで構築する[その1]](https://samurai-project.com/articles/3397)
-- [WordPressの開発環境をDockerで構築する[その2]](https://samurai-project.com/articles/3423)
-- [WordPressの開発環境をDockerで構築する[その3]](https://samurai-project.com/articles/3422)
+- [WordPress テスト入門 – 2章 –](https://kunoichiwp.com/faq/2434)
+- [wp scaffold theme-tests](https://developer.wordpress.org/cli/commands/scaffold/theme-tests/)
 - [Dockerで作ったWordPress環境にWP-CLIを追加する方法](https://samurai-project.com/articles/3413)
 - [Docker を使って WordPress plugin にテストのためのファイルを追加しよう](https://futureys.tokyo/lets-add-files-for-test-into-wordpress-plugin-by-docker/)
 - [composer Quick reference](https://hub.docker.com/_/composer)
 - [dockerからmysqlに接続できない](https://qiita.com/KOBA-RYOTA/items/3cf5070b54845e151034)
 - [PHP: PHPUnit](https://make.wordpress.org/core/handbook/testing/automated-testing/phpunit/)
-
-## 手順にないけどやること
-- SVNインストール
-    - `apt-get update`
-    - `apt-get install subversion`
-- vimインストール
-    - `apt-get update`
-    - `apt-get install vim`
-- mariadbインストール
-    - `apt-get update`
-    - `apt install mariadb-common`
-    - `apt install mariadb-client`
-    - `apt install mariadb-server`
-    - `service mariadb restart`
+- [WordPressのPHPUnitが刷新、プラグイン・テーマはポリフィル利用を](https://capitalp.jp/2021/10/14/wordpres-phpunit-updated/)
