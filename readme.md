@@ -39,7 +39,7 @@ apt-get install subversion
 wp --allow-root core install --url=http://localhost:8080/ --title=test --admin_user=admin --admin_password=password --admin_email=admin@example.com
 ```
 
-次に、スキャフォールドを実行。
+次に、スキャフォールドを実行する。
 
 ```
 cd /var/www/html
@@ -49,7 +49,7 @@ wp --allow-root scaffold theme-tests hepere
 これで、phpunitに必要なファイルが作成される。
 
 ## コンテナ内にテスト用の資材を準備
-まずは`mariadb`をインストール。<br>
+まずは`mariadb`をインストールする。<br>
 ※上から順番に実行しないと、最初からやり直しになる可能性あり。
 ```
 apt-get update
@@ -68,28 +68,36 @@ bash bin/install-wp-tests.sh wordpress root password localhost:/var/run/mysqld/m
 
 ## phpunitインストール
 `phpunit`をインストールする。
+
+あらかじめテーマがあるフォルダに移動する。
 ```
-composer init
+cd /var/www/html/wp-content/themes/hepere
+```
 
-Package name (<vendor>/<name>) [root/hepere]: wp_theme/hepere
-Description []:
-Author [, n to skip]: n
-Minimum Stability []: stable
-Package Type (e.g. library, project, metapackage, composer-plugin) []: composer-theme
-License []: GPL-3.0-or-later
+まずは、`composer.json`を作成する。
+`composer init`使用して、`composer.json` を作成する方法もあるが、本手順書では、直接作成する。<br>
+なお、`composer init`で作成する場合は、`require-dev`に`phpunit/phpunit:5.7.27`と`yoast/phpunit-polyfills`を追加する必要がある。
 
-Define your dependencies.
+では、ファイルを編集するために、`vim`をインストールする。
+```
+apt-get update
+apt-get install vim
+```
 
-Would you like to define your dependencies (require) interactively [yes]? no
-Would you like to define your dev dependencies (require-dev) interactively [yes]? no
-Add PSR-4 autoload mapping? Maps namespace "WpTheme\Hepere" to the entered relative path. [src/, n to skip]: no
-
+次に、`composer.json`を作成し、中身を以下のようにする。
+```
 {
     "name": "wp_theme/hepere",
     "type": "composer-theme",
     "license": "GPL-3.0-or-later",
     "minimum-stability": "stable",
-    "require": {}
+    "scripts": {
+      "test": "phpunit"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.7.21",
+        "yoast/phpunit-polyfills": "^1.0"
+    }
 }
 ```
 
@@ -103,6 +111,11 @@ composer install
 以下のコマンドでテストを実行する。
 ```
 composer test
+```
+
+もしデータベースに接続できない場合は、以下のコマンドを使用して`mariadb`を再起動すること。
+```
+service mariadb restart
 ```
 
 ## 参考資料
