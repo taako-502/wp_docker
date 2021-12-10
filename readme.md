@@ -95,7 +95,6 @@ Add PSR-4 autoload mapping? Maps namespace "WpTheme\Hepere" to the entered relat
 
 以下のコマンドを実行する。
 ```
-composer require --dev phpunit/phpunit:5.7.21
 composer update
 composer install
 ```
